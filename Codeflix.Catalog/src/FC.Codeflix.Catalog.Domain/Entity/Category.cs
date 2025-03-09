@@ -1,4 +1,6 @@
-﻿namespace FC.Codeflix.Catalog.Domain.Entity
+﻿using FC.Codeflix.Catalog.Domain.Exceptions;
+
+namespace FC.Codeflix.Catalog.Domain.Entity
 {
     public class Category
     {
@@ -8,13 +10,23 @@
         public bool IsActive { get; private set; }
         public DateTime CreatedAt { get; private set; }
 
-        public Category(string name, string description)
+        public Category(string name, string description, bool isActive = true)
         {
             Id = Guid.NewGuid();
             Name = name;
             Description = description;
-            IsActive = true;
+            IsActive = isActive;
             CreatedAt = DateTime.Now;
+
+            Validate();
+        }
+
+        public void Validate()
+        {
+            if (String.IsNullOrWhiteSpace(Name))
+                throw new EntityValidationException($"{nameof(Name)} is required");
+            if (Description == null)
+                throw new EntityValidationException($"{nameof(Description)} should not be empty or null");
         }
     }
 }
